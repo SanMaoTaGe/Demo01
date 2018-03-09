@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+    <constant name="struts.ui.theme" value="simple"></constant>
+    <constant name="struts.multipart.maxSize" value="209715200"></constant>
+
+    <package name="base" namespace="/" extends="json-default">
+
+        <interceptors>
+            <interceptor name="loginInterceptor" class="com.vincent.web.interceptor.LoginInterceptor">
+                <param name="excludeMethods">login</param>
+            </interceptor>
+            <interceptor-stack name="baseStack">
+                <interceptor-ref name="loginInterceptor"></interceptor-ref>
+                <interceptor-ref name="defaultStack"></interceptor-ref>
+            </interceptor-stack>
+        </interceptors>
+        <!--使用拦截器-->
+      <!-- <default-interceptor-ref name="baseStack"/>-->
+
+
+        <global-results>
+            <result name="to_login" type="redirect">/login.jsp</result>
+        </global-results>
+    </package>
+
+    <!-- 以下属于用户模块 -->
+    <package name="user" namespace="/" extends="base">
+
+        <action name="user_*" class="com.vincent.web.action.UserAction" method="{1}">
+
+            <result name="login_success" type="redirect">/index.jsp</result>
+            <result name="login_error">/login.jsp</result>
+            <result name="register_success" type="redirect">/login.jsp</result>
+        </action>
+    </package>
+
+    <!-- 以下属于客户模块 -->
+    <package name="customer" namespace="/" extends="base">
+        <action name="customer_*" class="com.vincent.web.action.CustomerAction" method="{1}">
+            <result name="input_error">/jsp/customer/add.jsp</result>
+            <result name="page_success">/jsp/customer/list.jsp</result>
+
+            <result name="delete_success" type="redirectAction">customer_findByPage.action</result>
+            <result name="update_success" type="redirectAction">customer_findByPage.action</result>
+
+            <result name="edit_success">/jsp/customer/edit.jsp</result>
+        </action>
+    </package>
+    <!-- 以下属于字典模块 -->
+    <package name="baseDict" namespace="/" extends="base">
+        <action name="baseDict_*" class="com.vincent.web.action.BaseDictAction" method="{1}">
+            <result name="json_success" type="json">
+                <param name="root">list</param>
+            </result>
+            <result name="json_error">/jsp/customer/add.jsp</result>
+        </action>
+    </package>
+</struts>
